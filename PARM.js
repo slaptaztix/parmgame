@@ -98,7 +98,7 @@ let frequencyScalingFactor = 0.8;
 let lastScoreThreshold = 0;
 
 // Game variables
-let player = new Player(canvas.width / 2 - 75, canvas.height - 150, 30);
+let player = new Player(canvas.width / 2 - 75, canvas.height - 150, 50);
 let score = 0;  // Set initial score to 0
 let numLives = 5;
 let bullets = [];
@@ -162,7 +162,7 @@ function handleTouchMove(event) {
         const touchX = event.touches[0].clientX;
         const deltaX = touchX - lastTouchX;
         lastTouchX = touchX;
-        const sensitivity = 1.5;
+        const sensitivity = 2.5;
         player.x += deltaX * sensitivity;
 
         // Ensure the player stays within the bounds of the screen
