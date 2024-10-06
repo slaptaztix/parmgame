@@ -857,7 +857,14 @@ function resetGame() {
     // Re-enable and show the start button only on mobile
     if (isMobile()) {
         startButton.style.display = 'block';  // Only visible on mobile
-        startButton.disabled = true;  // Keep disabled initially
+
+        // Check if the player name is already in the input box
+        if (playerNameInput.value.trim() !== "") {
+            startButton.classList.add('enabled'); // Enable the button visually
+            startButton.disabled = false;  // Enable the button programmatically
+        } else {
+            startButton.disabled = true;  // Keep disabled if no name is entered
+        }
     } else {
         startButton.style.display = 'none';  // Always hidden on desktop
     }
@@ -868,6 +875,7 @@ function resetGame() {
     canvas.removeEventListener('click', handleLeaderboardClick);
     canvas.addEventListener('click', handleLeaderboardClick);
 }
+
 
 
 
