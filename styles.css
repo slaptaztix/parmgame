@@ -247,3 +247,19 @@ button {
     font-size: 16px;
   }
 }
+
+@media (max-width: 768px) {
+    /* Make the shoot button smaller on mobile */
+    .shoot-button {
+        width: 80px;
+        height: 40px;
+        font-size: 14px;
+    }
+
+    /* Adjust other buttons (like mute and start button) for mobile */
+    .start-button, .mute-button {
+        width: 120px;
+        height: 50px;
+        font-size: 16px;
+    }
+}
