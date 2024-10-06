@@ -212,11 +212,10 @@ function loadMatemasieFont() {
     });
 }
 
-// Show the player input box when the page loads
 function showStartScreen() {
     playerNameInput.style.display = "block";
     shootButton.style.display = "none";  // Hide shoot button on start screen
-    muteButton.style.display = "block";  // Show mute button
+    muteButton.style.display = "block";  // Show mute button on start screen
 
     // Show start button on mobile, hide it on desktop
     if (isMobile()) {
@@ -227,12 +226,11 @@ function showStartScreen() {
     }
 }
 
-
-// Hide the player input box once the game starts
 function hideStartScreen() {
     playerNameInput.style.display = "none";
     muteButton.style.display = "none";  // Hide mute button once the game starts
 }
+
 
 // Listen for 'Enter' key to start the game after entering the player name
 document.addEventListener('keydown', startGameOnEnter);
