@@ -6,6 +6,11 @@ const ctx = canvas.getContext('2d');
 const playerNameInput = document.getElementById('playerNameInput');
 const shootButton = document.getElementById('shootButton');  // Existing shoot button setup
 const startButton = document.getElementById('startButton');  // Add this for start button setup
+const initialPlayerX = canvas.width / 2 - 75;
+const initialPlayerY = canvas.height - 225;  // Adjust this to keep the shooter above the shoot button
+
+// Game variables
+let player = new Player(initialPlayerX, initialPlayerY, 15);
 
 // Show start button only on mobile and disable initially
 if (window.innerWidth <= 768) {
@@ -844,8 +849,11 @@ function resetGame() {
     explosions = [];
     keys = {};
     canShoot = true;
-    player.x = canvas.width / 2 - 75;
-    player.y = canvas.height - 150;
+
+    // Reset player to initial position
+    player.x = initialPlayerX;
+    player.y = initialPlayerY;
+
     baseDropInterval = 2000;
     lastScoreThreshold = 0;
 
@@ -875,9 +883,6 @@ function resetGame() {
     canvas.removeEventListener('click', handleLeaderboardClick);
     canvas.addEventListener('click', handleLeaderboardClick);
 }
-
-
-
 
 // Function to start the background music after user interaction
 function startBackgroundMusic() {
@@ -911,16 +916,16 @@ function isMobile() {
 function adjustSizes() {
     if (isMobile()) {
         // Smaller sizes for mobile
-        player.width = 100;
-        player.height = 100;
+        player.width = 75;
+        player.height = 75;
 
         mice.forEach(mouse => {
-            mouse.width = 75;
-            mouse.height = 75;
+            mouse.width = 50;
+            mouse.height = 50;
         });
 
         bullets.forEach(bullet => {
-            bullet.width = 3;
+            bullet.width = 5;
             bullet.height = 15;
         });
 
