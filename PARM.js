@@ -98,7 +98,7 @@ let frequencyScalingFactor = 0.8;
 let lastScoreThreshold = 0;
 
 // Game variables
-let player = new Player(canvas.width / 2 - 75, canvas.height - 150, 200);
+let player = new Player(canvas.width / 2 - 75, canvas.height - 300, 200);
 let score = 0;  // Set initial score to 0
 let numLives = 5;
 let bullets = [];
