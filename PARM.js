@@ -144,36 +144,45 @@ let lastTouchX = 0;
 
 const sensitivity = 0.5;
 
-// Add touch event listeners for movement
-canvas.addEventListener('touchstart', handleTouchStart, false);
-canvas.addEventListener('touchmove', handleTouchMove, false);
-canvas.addEventListener('touchend', handleTouchEnd, false);
+// Track touches for multi-touch
+let touches = {};  // Object to track multiple touch points
 
-function handleTouchStart(event) {
+// Add touch event listeners for movement and multi-touch
+canvas.addEventListener('touchstart', function (event) {
     event.preventDefault();  // Prevent default action for touch
-    isTouching = true;
-    startX = event.touches[0].clientX; 
-    lastTouchX = startX; 
-}
-
-function handleTouchMove(event) {
-    event.preventDefault();  // Prevent default swiping gestures
-    if (isTouching) {
-        const touchX = event.touches[0].clientX;
-        const deltaX = touchX - lastTouchX;
-        lastTouchX = touchX;
-        const sensitivity = 1.5;
-        player.x += deltaX * sensitivity;
-
-        // Ensure the player stays within the bounds of the screen
-        player.x = Math.max(0, Math.min(player.x, canvas.width - player.width));
+    for (let i = 0; i < event.touches.length; i++) {
+        const touch = event.touches[i];
+        touches[touch.identifier] = { x: touch.clientX, y: touch.clientY }; // Track each touch
     }
-}
+}, false);
 
-function handleTouchEnd(event) {
+canvas.addEventListener('touchmove', function (event) {
+    event.preventDefault();  // Prevent default swiping gestures
+    for (let i = 0; i < event.touches.length; i++) {
+        const touch = event.touches[i];
+        const touchData = touches[touch.identifier];
+        if (touchData) {
+            const deltaX = touch.clientX - touchData.x;
+            const sensitivity = 1.5;  // Adjust sensitivity for faster movement
+            player.x += deltaX * sensitivity;
+
+            // Ensure the player stays within the bounds of the screen
+            player.x = Math.max(0, Math.min(player.x, canvas.width - player.width));
+
+            // Update the touch position
+            touches[touch.identifier].x = touch.clientX;
+        }
+    }
+}, false);
+
+canvas.addEventListener('touchend', function (event) {
     event.preventDefault();  // Prevent default touch end behavior
-    isTouching = false;
-}
+    for (let i = 0; i < event.changedTouches.length; i++) {
+        const touch = event.changedTouches[i];
+        delete touches[touch.identifier];  // Remove touch tracking when a finger is lifted
+    }
+}, false);
+
 
 // Show the mobile shoot button only on touch devices when the game starts
 function showShootButton() {
@@ -184,7 +193,7 @@ function showShootButton() {
     }
 }
 
-// Add event listener to the shoot button
+// Add event listener to the shoot button (for desktop click)
 shootButton.addEventListener('click', () => {
     if (!gameEnded && canShoot) {
         bullets.push({
@@ -197,6 +206,21 @@ shootButton.addEventListener('click', () => {
         setTimeout(() => canShoot = true, shootCooldown);  // Cooldown for shooting
     }
 });
+
+// Add event listener to the shoot button (for mobile touch)
+shootButton.addEventListener('touchstart', function (event) {
+    event.preventDefault();  // Prevent default behavior on touch
+    if (!gameEnded && canShoot) {
+        bullets.push({
+            x: player.x + player.width / 2,  // Center the bullet based on player size
+            y: player.y,
+            width: 5,
+            height: 20
+        });
+        canShoot = false;
+        setTimeout(() => canShoot = true, shootCooldown);  // Cooldown for shooting
+    }
+}, false);
 
 // Function to ensure the Matemasie font is fully loaded before use
 function loadMatemasieFont() {
@@ -927,6 +951,10 @@ window.onload = () => {
     if (!isMobile()) {
         startButton.style.display = 'none';  // Hide start button on desktop
     }
+
+    // Ensure sizes are adjusted when the game loads
+    adjustSizes();
 };
+
 
 
