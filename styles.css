@@ -1,0 +1,249 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: url("img/cheesebg.webp") no-repeat center center fixed;
+  background-size: cover;
+  overflow: hidden;
+  height: 100vh;
+}
+
+canvas {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: transparent;
+  z-index: 1;
+}
+
+#playerNameInput {
+  width: 300px;
+  padding: 10px;
+  font-size: 18px;
+  font-family: Arial, sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+  margin-top: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.matemasie-regular {
+  font-family: "Matemasie", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+button {
+  -ms-user-select: none;
+  /* Prevent text selection */
+  -webkit-user-select: none;
+  /* Disable on Webkit browsers */
+  -moz-user-select: none;
+  /* Disable on Firefox */
+  user-select: none;
+  /* Disable on IE/Edge */
+  -webkit-tap-highlight-color: transparent;
+  /* Remove tap highlight on mobile */
+}
+
+.shoot-button {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  padding: 20px 30px;
+  font-size: 24px;
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  z-index: 3;
+  display: none;
+}
+
+.start-button {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 15px 25px;
+  font-size: 24px;
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  z-index: 3;
+  opacity: 0.5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 1;
+}
+
+.start-button.enabled {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.mute-button {
+  position: absolute;
+  bottom: 90px;
+  right: 30px;
+  padding: 20px 30px;
+  font-size: 20px;
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  z-index: 3;
+}
+
+/* Prevent pinch-zoom and default touch gestures */
+canvas {
+  touch-action: none;
+}
+
+html,
+body {
+  touch-action: manipulation;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+
+  /* Make the shooter smaller on mobile */
+  .shooter {
+    width: 100px;
+    height: 100px;
+  }
+
+  /* Make the mice smaller on mobile */
+  .mouse {
+    width: 75px;
+    height: 75px;
+  }
+
+  /* Make the bullets smaller on mobile */
+  .bullet {
+    width: 3px;
+    height: 15px;
+  }
+
+  /* Make the text smaller on mobile */
+  .game-over-text,
+  .countdown-text {
+    font-size: 80px;
+  }
+
+  .shoot-button {
+    display: block;
+  }
+
+  .start-button {
+    display: block;
+  }
+
+  button {
+    width: 120px;
+    height: 50px;
+    font-size: 16px;
+  }
+}
+
+button {
+  width: 180px;
+  height: 60px;
+  padding: 10px;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: none;
+  border-radius: 10px;
+  background-color: #ff8c00;
+  color: white;
+  box-sizing: border-box;
+  line-height: 1;
+}
+
+.game-over-text,
+.countdown-text {
+  font-size: 150px;
+  text-align: center;
+}
+
+/* Leaderboard styling */
+.leaderboard {
+  position: relative;
+  width: 50%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: 10px;
+  text-align: center;
+  top: 20px;
+}
+
+@media (max-width: 768px) {
+  .leaderboard {
+    width: 90%;
+    margin: 0 auto;
+    top: 10px;
+  }
+}
+
+/* Leaderboard button styling */
+.leaderboard-buttons {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: calc(100% - 40px);
+  display: flex;
+  justify-content: space-between;
+  z-index: 10;
+}
+
+.play-again-button,
+.quit-button {
+  width: 150px;
+  height: 50px;
+  font-size: 18px;
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 11;
+}
+
+@media (max-width: 768px) {
+
+  /* Place buttons outside the transparent box for mobile */
+  .play-again-button {
+    position: absolute;
+    bottom: 20px;
+    left: 10px;
+    width: 120px;
+    height: 45px;
+    font-size: 16px;
+  }
+
+  .quit-button {
+    position: absolute;
+    bottom: 20px;
+    right: 10px;
+    width: 120px;
+    height: 45px;
+    font-size: 16px;
+  }
+}
