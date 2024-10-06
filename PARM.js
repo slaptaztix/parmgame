@@ -98,7 +98,7 @@ let frequencyScalingFactor = 0.8;
 let lastScoreThreshold = 0;
 
 // Game variables
-let player = new Player(canvas.width / 2 - 75, canvas.height - 150, 8.5);
+let player = new Player(canvas.width / 2 - 75, canvas.height - 150, 12);
 let score = 0;  // Set initial score to 0
 let numLives = 5;
 let bullets = [];
@@ -142,34 +142,36 @@ let isTouching = false;
 let startX = 0;
 let lastTouchX = 0;
 
+const sensitivity = 0.5;
+
 // Add touch event listeners for movement
 canvas.addEventListener('touchstart', handleTouchStart, false);
 canvas.addEventListener('touchmove', handleTouchMove, false);
 canvas.addEventListener('touchend', handleTouchEnd, false);
 
 function handleTouchStart(event) {
+    event.preventDefault();  // Prevent default action for touch
     isTouching = true;
-    startX = event.touches[0].clientX; // Record initial touch position
-    lastTouchX = startX; // Initialize last touch position
+    startX = event.touches[0].clientX; 
+    lastTouchX = startX; 
 }
 
 function handleTouchMove(event) {
+    event.preventDefault();  // Prevent default swiping gestures
     if (isTouching) {
         const touchX = event.touches[0].clientX;
-        const deltaX = touchX - lastTouchX; // Calculate the change in touch position
-        lastTouchX = touchX; // Update last touch position
+        const deltaX = touchX - lastTouchX;
+        lastTouchX = touchX;
+        const sensitivity = 0.2;
+        player.x += deltaX * sensitivity;
 
-        const sensitivity = 0.2; // Adjust sensitivity for smoother movement
-        player.x += deltaX * sensitivity; // Move the player based on the deltaX
-
-        // Keep within bounds (ensure the player doesn't go off-screen)
+        // Ensure the player stays within the bounds of the screen
         player.x = Math.max(0, Math.min(player.x, canvas.width - player.width));
     }
 }
 
-
-
-function handleTouchEnd() {
+function handleTouchEnd(event) {
+    event.preventDefault();  // Prevent default touch end behavior
     isTouching = false;
 }
 
@@ -928,4 +930,5 @@ window.onload = () => {
         startButton.style.display = 'none';  // Hide start button on desktop
     }
 };
+
 
