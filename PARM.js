@@ -162,7 +162,7 @@ function handleTouchMove(event) {
         const touchX = event.touches[0].clientX;
         const deltaX = touchX - lastTouchX;
         lastTouchX = touchX;
-        const sensitivity = 3;
+        const sensitivity = 2;
         player.x += deltaX * sensitivity;
 
         // Ensure the player stays within the bounds of the screen
