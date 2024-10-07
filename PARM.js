@@ -6,11 +6,6 @@ const ctx = canvas.getContext('2d');
 const playerNameInput = document.getElementById('playerNameInput');
 const shootButton = document.getElementById('shootButton');  // Existing shoot button setup
 const startButton = document.getElementById('startButton');  // Add this for start button setup
-const initialPlayerX = canvas.width / 2 - 75;
-const initialPlayerY = canvas.height - 225;  // Adjust this to keep the shooter above the shoot button
-
-// Game variables
-let player = new Player(initialPlayerX, initialPlayerY, 15);
 
 // Show start button only on mobile and disable initially
 if (window.innerWidth <= 768) {
@@ -31,11 +26,15 @@ playerNameInput.addEventListener('input', function () {
 
 // Start the game when the start button is clicked (mobile)
 startButton.addEventListener('click', function () {
-    if (!gameStarted && playerNameInput.value.trim() !== "") {
-        hideStartScreen();
-        startCountdown();  // Begin countdown and start the game
+    const playerName = playerNameInput.value.trim();  // Check player name again
+    if (playerName !== "") {
+        hideStartScreen();  // Hide the start screen
+        startCountdown();   // Begin countdown and start the game
+    } else {
+        alert("Please enter your name to start the game!"); // Alert if the name is missing
     }
 });
+
 
 // Player class
 class Player {
@@ -113,13 +112,7 @@ let keys = {};
 let gameEnded = false;
 let highScores = [];
 
-// Leaderboard button coordinates and dimensions
-const buttonWidth = 180;
-const buttonHeight = 60;
-let playAgainButton = {};
-let quitButton = {};
-
-// Load images and sounds (same as before)
+// Load images and sounds
 const cheeseImage = new Image();
 cheeseImage.src = 'img/shooter_img.png';
 
@@ -188,7 +181,6 @@ canvas.addEventListener('touchend', function (event) {
     }
 }, false);
 
-
 // Show the mobile shoot button only on touch devices when the game starts
 function showShootButton() {
     if ('ontouchstart' in document.documentElement) {
@@ -230,7 +222,6 @@ shootButton.addEventListener('touchstart', function (event) {
 // Function to ensure the Matemasie font is fully loaded before use
 function loadMatemasieFont() {
     return new Promise((resolve, reject) => {
-        // Load the specific font and size you will use
         document.fonts.load('400px "Matemasie"').then(() => {
             console.log('Matemasie font loaded successfully.');
             resolve();
@@ -249,7 +240,14 @@ function showStartScreen() {
     // Show start button on mobile, hide it on desktop
     if (isMobile()) {
         startButton.style.display = 'block';  // Show on mobile
-        startButton.disabled = true;  // Initially disabled until a name is entered
+        // Always enable the start button if the player name exists
+        if (playerNameInput.value.trim() !== "") {
+            startButton.classList.add('enabled');
+            startButton.disabled = false;
+        } else {
+            startButton.classList.remove('enabled');
+            startButton.disabled = true;  // Keep disabled if no name is present
+        }
     } else {
         startButton.style.display = 'none';  // Hide on desktop
     }
@@ -259,7 +257,6 @@ function hideStartScreen() {
     playerNameInput.style.display = "none";
     muteButton.style.display = "none";  // Hide mute button once the game starts
 }
-
 
 // Listen for 'Enter' key to start the game after entering the player name
 document.addEventListener('keydown', startGameOnEnter);
@@ -318,8 +315,6 @@ function startCountdown() {
         startCountdownWithoutFont();
     });
 }
-
-
 
 // Hide the shoot button initially on the start screen
 shootButton.style.display = 'none';
@@ -423,7 +418,6 @@ function dropMouseBullets(mouse) {
     }
 }
 
-
 // Calculate the new bullet drop interval based on the score
 function calculateDropInterval() {
     if (score >= lastScoreThreshold + 5) {
@@ -517,15 +511,15 @@ function update() {
             numLives -= 1;
 
             // This part creates the explosion for the cheese
-    explosions.push({
-        x: player.x + player.width / 2,
-        y: player.y + player.height / 2,
-        type: 'line',  // Type 'line' for line-style explosion
-        lines: 40,  // Number of lines in the explosion
-        length: 0,
-        maxLength: 200,
-        alpha: 1,
-    });
+            explosions.push({
+                x: player.x + player.width / 2,
+                y: player.y + player.height / 2,
+                type: 'line',  // Type 'line' for line-style explosion
+                lines: 40,  // Number of lines in the explosion
+                length: 0,
+                maxLength: 200,
+                alpha: 1,
+            });
 
             mouseBullets.splice(bulletIndex, 1);
 
@@ -544,12 +538,12 @@ function render() {
     player.draw(ctx, cheeseImage);
 
     bullets.forEach(bullet => {
-        ctx.fillStyle = 'rgba(219, 124, 0)';
+        ctx.fillStyle = 'rgba(219, 124, 0, 1)';
         ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
     });
 
     mouseBullets.forEach(bullet => {
-        ctx.fillStyle = 'rgba(44, 23, 3)';
+        ctx.fillStyle = 'rgba(44, 23, 3, 1)';
         ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
     });
 
@@ -557,7 +551,7 @@ function render() {
         ctx.drawImage(mouse.image, mouse.x, mouse.y, mouse.width, mouse.height);
     });
 
-        // Render explosions (Line explosion logic added for cheese)
+    // Render explosions (Line explosion logic added for cheese)
     explosions.forEach((explosion, index) => {
         if (explosion.type === 'line') {
             // Handle line explosion type
@@ -611,7 +605,7 @@ function gameOver() {
     saveHighScore(playerName, score);
     gameEnded = true;
 
-    shootButton.style.display ='none';
+    shootButton.style.display = 'none';
 
     explosions.push({
         x: player.x + 75,
@@ -689,7 +683,6 @@ function gameOverTextAnimation() {
 
     drawGameOverText();
 }
-
 
 // Save high score to the server (FastAPI) and localStorage
 function saveHighScore(playerName, score) {
@@ -790,7 +783,6 @@ function displayLeaderboard() {
     document.body.appendChild(leaderboardDiv);  // Add buttons to the body
 }
 
-
 // Handle click events on the leaderboard buttons
 function handleLeaderboardClick(event) {
     const rect = canvas.getBoundingClientRect();
@@ -827,9 +819,7 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Function to reset the game state
 function resetGame() {
-    // Remove leaderboard buttons before resetting the game
     const leaderboardDiv = document.querySelector('.leaderboard-buttons');
     if (leaderboardDiv) {
         leaderboardDiv.remove();
@@ -850,31 +840,30 @@ function resetGame() {
     keys = {};
     canShoot = true;
 
-    // Reset player to initial position
-    player.x = initialPlayerX;
-    player.y = initialPlayerY;
+    // Resize the canvas to ensure it's consistent with the viewport
+    resizeCanvas();  // Ensure canvas is resized before positioning the shooter
+
+    // Ensure the player's position is above the shoot button
+    positionShooterAboveShootButton(); // Set the shooter above the shoot button
 
     baseDropInterval = 2000;
     lastScoreThreshold = 0;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Show start screen
     showStartScreen();
 
-    // Re-enable and show the start button only on mobile
     if (isMobile()) {
-        startButton.style.display = 'block';  // Only visible on mobile
-
-        // Check if the player name is already in the input box
+        startButton.style.display = 'block';
         if (playerNameInput.value.trim() !== "") {
-            startButton.classList.add('enabled'); // Enable the button visually
-            startButton.disabled = false;  // Enable the button programmatically
+            startButton.classList.add('enabled');
+            startButton.disabled = false;
         } else {
-            startButton.disabled = true;  // Keep disabled if no name is entered
+            startButton.classList.remove('enabled');
+            startButton.disabled = true;
         }
     } else {
-        startButton.style.display = 'none';  // Always hidden on desktop
+        startButton.style.display = 'none';
     }
 
     document.removeEventListener('keydown', startGameOnEnter);
@@ -883,6 +872,9 @@ function resetGame() {
     canvas.removeEventListener('click', handleLeaderboardClick);
     canvas.addEventListener('click', handleLeaderboardClick);
 }
+
+
+
 
 // Function to start the background music after user interaction
 function startBackgroundMusic() {
@@ -907,32 +899,22 @@ function isMobile() {
     return window.innerWidth <= 768;
 }
 
-// Function to check if the screen is small (mobile)
-function isMobile() {
-    return window.innerWidth <= 768;
-}
-
-// Function to adjust sizes for mobile or desktop
+// Adjust player, mouse, bullet sizes based on screen size (mobile or desktop)
 function adjustSizes() {
     if (isMobile()) {
-        // Smaller sizes for mobile
-        player.width = 75;
-        player.height = 75;
+        player.width = 100;
+        player.height = 100;
 
         mice.forEach(mouse => {
-            mouse.width = 50;
-            mouse.height = 50;
+            mouse.width = 75;
+            mouse.height = 75;
         });
 
         bullets.forEach(bullet => {
-            bullet.width = 5;
+            bullet.width = 3;
             bullet.height = 15;
         });
-
-        // Adjust game text size for mobile
-        ctx.font = '80px "Matemasie", sans-serif';  // Smaller text for countdown/game over
     } else {
-        // Default sizes for desktop
         player.width = 150;
         player.height = 150;
 
@@ -945,20 +927,36 @@ function adjustSizes() {
             bullet.width = 5;
             bullet.height = 20;
         });
-
-        // Adjust game text size for desktop
-        ctx.font = '150px "Matemasie", sans-serif';  // Bigger text for countdown/game over
     }
+
+    // Call the function to reposition the shooter based on the shoot button's position
+    positionShooterAboveShootButton();
+}
+
+
+// Function to position the shooter above the shoot button
+function positionShooterAboveShootButton() {
+    const shootButtonHeight = shootButton.offsetHeight || 0;  // Get the height of the shoot button
+    const marginAboveButton = 100; // Adjust this value if you want more/less space above the shoot button
+    player.x = canvas.width / 2 - player.width / 2; // Center horizontally
+    player.y = canvas.height - shootButtonHeight - player.height - marginAboveButton; // Position above the shoot button
+}
+
+
+// Force canvas resizing on window resize
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    adjustSizes();  // Ensure game elements are resized correctly
 }
 
 // Make sure the game adjusts sizes when the window is resized or when it loads
-window.addEventListener('resize', adjustSizes);
-adjustSizes();  // Call this when the game starts
+window.addEventListener('resize', resizeCanvas);
 
-// Insert this at the very end of your .js file
+// Combine the window.onload event handlers into one
 window.onload = () => {
-    // Call showStartScreen when the page loads
-    showStartScreen();
+    resizeCanvas();  // Ensure proper canvas size and element adjustments at start
+    showStartScreen();  // Show the start screen initially
     
     // If it's not a mobile device, hide the start button right away
     if (!isMobile()) {
@@ -968,6 +966,5 @@ window.onload = () => {
     // Ensure sizes are adjusted when the game loads
     adjustSizes();
 };
-
 
 
